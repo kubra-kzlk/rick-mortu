@@ -1,0 +1,55 @@
+export interface Character {
+    id: number;
+    name: string;
+    status: Status;
+    species: Species;
+    type: string;
+    gender: Gender;
+    origin: Origin;
+    image: string;
+}
+
+export enum Gender {
+    Female = "Female",
+    Male = "Male",
+    Unknown = "unknown",
+}
+
+export enum Origin {
+    Abadango = "Abadango",
+    EarthC137 = "Earth (C-137)",
+    EarthReplacementDimension = "Earth (Replacement Dimension)",
+    Unknown = "unknown",
+}
+
+export enum Species {
+    Alien = "Alien",
+    Human = "Human",
+}
+
+export enum Status {
+    Alive = "Alive",
+    Dead = "Dead",
+    Unknown = "unknown",
+}
+
+
+
+
+export interface Episode {
+    id: number;
+    name: string;
+    air_date: string;
+    episode: number;
+    season: number;
+}
+
+
+export interface Location {
+    id: number;
+    name: string;
+    type: string;
+    dimension: string;
+    characters?: number[];
+}
+

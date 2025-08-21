@@ -1,40 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+Voorzie 3 API Endpoints met behulp van de API router in NextJS:
+Characters
+Episodes
+Locations
 
-## Getting Started
+Characters Endpoint
+De Characters Endpoint voorziet de data die je terugkrijgt van https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/characters.json. Er moet verder niets gewijzigd worden aan deze data.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Episodes Endpoint
+De Episodes Endpoint voorziet de data die je terugkrijgt van https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/episodes.json. Er moet verder niets gewijzigd worden aan deze data.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Locations Endpoint
+Maak een API endpoint, waarin de locations van https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/locations.json worden uitgebreid met een characters property. Deze property is een array, met daarin alle ids van characters die als origin die location hebben.
+Gebruik de juiste NextJS API Endpoint om de character IDs op te vragen.
+Wanneer er geen enkel character van deze locatie afkomstig is, moet deze niet worden ingevuld.
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+oude interface:
+interface location {
+    id:        number;
+    name:      string;
+    type:      string;
+    dimension: string;
+}
+  
+nieuwe interface:
+interface location {
+    id:        number;
+    name:      string;
+    type:      string;
+    dimension: string;
+    characters?: number[];
+}
+  
+Static Site Generation
+Maak gebruik van static site generation om een dynamische route te maken voor elk character, op basis van de id van het character. Gebruik hiervoor de route /characters/1
+Je mag hiervoor rechtstreeks gebruik maken van de data op https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/characters.json. Je moet hiervoor dus niet de locale API gebruiken.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Clientside Rendering
+Maak gebruik van clientside rendering om een overzichtspagina te bouwen, waarin een overzicht van alle locaties en de daarbijhorende characters worden getoond.
+Gebruik hiervoor de route /
+Maak hierbij gebruik van de NextJS API routes die je reeds aanmaakte.
+Wanneer je klikt op een character, dan wordt je naar de character-pagina gestuurd van dat character (uit de vorige oefening), op basis van de character-id.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Serverside Rendering
+Maak gebruik van serverside rendering om een dynamische route te maken voor elke episode, op basis van de id van elke episode. Bovenaan deze pagina moet een zoekbalk staan, waarin je kan zoeken naar andere episodes op basis van name of air_date. Klikken op één van de zoekresultaten brengt je naar de correcte episode-pagina.
+Je mag hiervoor rechtstreeks gebruik maken van de data op https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/episodes.json. Je moet hiervoor dus niet de locale API gebruiken.
