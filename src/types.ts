@@ -15,11 +15,9 @@ export enum Gender {
     Unknown = "unknown",
 }
 
-export enum Origin {
-    Abadango = "Abadango",
-    EarthC137 = "Earth (C-137)",
-    EarthReplacementDimension = "Earth (Replacement Dimension)",
-    Unknown = "unknown",
+export interface Origin {
+    name: string;
+    url: string;
 }
 
 export enum Species {

@@ -33,7 +33,7 @@ export default function CharacterDetailPage(props: Character) {
         <main>
             <h1>{props.name}</h1>
             <Image
-                src={props.image || '/placeholder.png'} alt={''}
+                src={props.image} alt={''}
                 width={300}
                 height={300}
             />
@@ -48,7 +48,6 @@ export default function CharacterDetailPage(props: Character) {
 
             <p>{props.gender}</p>
 
-            <p>{props.origin}</p>
 
         </main>
     );
