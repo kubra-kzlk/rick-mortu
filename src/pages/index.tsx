@@ -22,8 +22,8 @@ export default function HomePage() {
         async function load() {
             try {
                 const [locRes, charRes] = await Promise.all([
-                    fetch('/api/locations').then((r) => r.json()),
-                    fetch('/api/characters').then((r) => r.json()),
+                    fetch('/api/Locations').then((r) => r.json()),
+                    fetch('/api/Characters').then((r) => r.json()),
                 ]);
                 setLocations(locRes);
                 setCharacters(charRes);
