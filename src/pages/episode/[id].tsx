@@ -4,38 +4,92 @@ Maak gebruik van serverside rendering om een dynamische route te maken voor elke
 obvd id van elke episode. Bovenaan deze pagina moet een zoekbalk staan, waarin je kan 
 zoeken naar andere episodes obv name of air_date. Klikken op 1 vd zoekresultaten brengt je nr de correcte episode-pag.
  */
-
-//### Static Site Generation
-
-import { GetStaticPaths, GetStaticProps } from 'next';
 import { Episode } from '../../types';
+import Link from 'next/link';
+import type { GetServerSideProps } from 'next';
+import { useMemo, useState } from 'react';
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const response = await fetch('https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/episodes.json');
-    const episodes: Episode[] = await response.json();
+interface Props {
+    episode: Episode | null;
+    episodes: Episode[];
+    params: { id: string };
+}
+
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+    const res = await fetch('https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/characters.json');
+    const episodes: Episode[] = res.ok ? await res.json() : [];
+
+    const id = String(ctx.params?.id ?? '');
+    const episode = episodes.find((e) => String(e.id) === id) ?? null;
+
     return {
-        paths: episodes.map(w => ({ params: { id: String(w.id) } })),
-        fallback: false,
+        props: {
+            episode,
+            episodes,
+            params: { id },
+        },
     };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const response = await fetch('https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/episodes.json');
-    const episode: Episode[] = await response.json();
-    return { props: { episode } };
-};
 
-export default function EpisodeDetailPage({ episode }: { episode: Episode }) {
+function Search({ episodes }: { episodes: Episode[] }) {
+    const [q, setQ] = useState('');
+    const filtered = episodes.filter(
+        (e) =>
+            !q ||
+            e.name.toLowerCase().includes(q.toLowerCase()) ||
+            e.air_date.toLowerCase().includes(q.toLowerCase())
+    );
 
     return (
-        <main>
+        <div>
+            <input
+                type="search"
+                placeholder="Zoek op naam of air date…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+            />
+            <ul>
+                {filtered.map((ep) => (
+                    <li key={ep.id}>
+                        <Link href={`/episodes/${ep.id}`}>
+                            {ep.name} — {ep.air_date}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+
+
+export default function EpisodePage({ episode, episodes, params }: Props) {
+    if (!episode) {
+        return (
+            <main style={{ padding: 24 }}>
+                <h1>Episode niet gevonden</h1>
+                <p style={{ opacity: 0.7 }}>Gevraagde id: {params.id}</p>
+                <Link href="/">← Terug naar overzicht</Link>
+                <h2 style={{ marginTop: 24 }}>Zoek andere episodes</h2>
+                <Search episodes={episodes} />
+            </main>
+        );
+    }
+
+    return (
+        <main style={{ padding: 24 }}>
+            <Link href="/">← Terug naar overzicht</Link>
             <h1>{episode.name}</h1>
+            <p style={{ opacity: 0.7 }}>Episode id (uit params): {params.id}</p>
+            <p><strong>Air date:</strong> {episode.air_date}</p>
+            <p>
+                <strong>Season:</strong> {episode.season} — <strong>Episode:</strong> {episode.episode}
+            </p>
 
-            <p>{episode.air_date}</p>
-
-            <p>{episode.episode}</p>
-            <p>{episode.season}</p>
-
+            <h2 style={{ marginTop: 32 }}>Zoek andere episodes</h2>
+            <Search episodes={episodes} />
         </main>
     );
 }

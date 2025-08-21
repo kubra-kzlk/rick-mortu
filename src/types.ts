@@ -50,6 +50,13 @@ export interface Location {
     name: string;
     type: string;
     dimension: string;
-    characters?: number[];
 }
 
+
+export interface EnrichedLocation {
+    id: number;
+    name: string;
+    type: string;
+    dimension: string;
+    characters?: number[]; // Optional property for character IDs
+}

@@ -18,11 +18,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
     };
 };
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps<{ character: Character | null }> = async (ctx) => {
+    const id = Number(ctx.params?.id);
     const response = await fetch('https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/characters.json');
-    const character: Character[] = await response.json();
+    const characters: Character[] = await response.json();
+    const character = characters.find((c) => c.id === id) ?? null;
     return { props: { character } };
 };
+
 
 export default function CharacterDetailPage(props: Character) {
 

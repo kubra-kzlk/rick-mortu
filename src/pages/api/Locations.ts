@@ -1,5 +1,6 @@
-import { Location } from '../../types';
+import { Location, Character, EnrichedLocation } from '../../types';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 
 export default async function handler(
     req: NextApiRequest,
@@ -7,24 +8,30 @@ export default async function handler(
 ) {
     try {
         const response = await fetch('https://raw.githubusercontent.com/AP-G-2PRO-Webframeworks/DATA/refs/heads/main/rickandmorty/locations.json');
-        const jsonData = await response.json();
-   
+        const locations: Location[] = await response.json();
 
-        // Get the list of regions and dinomon
-        const regions = jsonData.region;
-        const dinomons = jsonData.dinomon;
+        // 2) haal characters via EIGEN endpoint
+        const charRes = await fetch(`${origin}/api/characters`);
+        if (!charRes.ok) {
+            return NextResponse.json({ error: 'Failed to fetch characters' }, { status: 500 });
+        }
+        const characters: Character[] = await charRes.json();
 
-        //Transform dinomons by adding full region object
-        const enrichedDinomons = dinomons.map((dinomon: any) => {
-            const regionsById = regions.find((r: any) => r.id === dinomon.region);
-            return {
-                ...dinomon,
-                region: regionsById || null, // Replace regionId with full region object
-            };
+        // 3) maak een map: originName -> ids[]
+        const originToIds = new Map<string, number[]>();
+        for (const c of characters) {
+            const arr = originToIds.get(c.origin) ?? [];
+            arr.push(c.id);
+            originToIds.set(c.origin, arr);
+        }
+
+        // 4) verrijk locaties; enkel "characters" toevoegen als er ids zijn
+        const enriched: EnrichedLocation[] = locations.map((loc) => {
+            const ids = originToIds.get(loc.name) ?? [];
+            if (ids.length === 0) return { ...loc }; // geen property toevoegen
+            return { ...loc, characters: ids };
         });
-
-
-        res.status(200).json(enrichedDinomons);
+        res.status(200).json(enriched);
     } catch (error) {
         console.error('Error fetching dinomon:', error);
         res.status(500).json({ message: 'Failed to fetch dinomon' });
